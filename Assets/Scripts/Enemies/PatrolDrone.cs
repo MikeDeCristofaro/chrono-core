@@ -1,4 +1,5 @@
 using UnityEngine;
+using ChronoCore.Rewind;
 
 public class PatrolDrone : MonoBehaviour, IRewindable
 {
@@ -52,20 +53,25 @@ public class PatrolDrone : MonoBehaviour, IRewindable
         // but normal mobs just stay dead per their snapshot state
     }
 
-    public void CaptureState(ref RewindSnapshot snapshot)
+    public RewindSnapshot CaptureState()
     {
-        snapshot.position = transform.position;
-        snapshot.rotation = transform.rotation;
-        snapshot.health = currentHealth;
-        snapshot.isDead = isDead;
+        return new RewindSnapshot
+        {
+            Position = transform.position,
+            Rotation = transform.eulerAngles.z,
+            Health = currentHealth,
+            IsActive = !isDead,
+            CustomIntA = direction
+        };
     }
 
     public void RestoreState(RewindSnapshot snapshot)
     {
-        transform.position = snapshot.position;
-        transform.rotation = snapshot.rotation;
-        currentHealth = snapshot.health;
-        isDead = snapshot.isDead;
+        transform.position = snapshot.Position;
+        transform.rotation = Quaternion.Euler(0, 0, snapshot.Rotation);
+        currentHealth = snapshot.Health;
+        isDead = !snapshot.IsActive;
+        direction = snapshot.CustomIntA;
         gameObject.SetActive(!isDead);
     }
 

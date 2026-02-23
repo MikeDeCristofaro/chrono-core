@@ -6,6 +6,7 @@ namespace ChronoCore.Rewind
     {
               public Vector2 Position;
               public Vector2 Velocity;
+              public float Rotation;
               public int Health;
               public bool IsActive;
               public int AnimatorStateHash;
