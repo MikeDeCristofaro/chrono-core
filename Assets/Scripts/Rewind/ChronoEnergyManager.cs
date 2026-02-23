@@ -46,7 +46,16 @@ public class ChronoEnergyManager : MonoBehaviour
 
     private void ConsumeEnergy(float amount)
     {
+        float previousEnergy = currentEnergy;
         currentEnergy = Mathf.Max(0, currentEnergy - amount);
+        
+        if (previousEnergy > 0 && currentEnergy <= 0)
+        {
+            if (JuiceManager.Instance != null)
+            {
+                JuiceManager.Instance.TimeScaleDip(0.1f, 0.4f);
+            }
+        }
     }
 
     private void RegenerateEnergy(float amount)

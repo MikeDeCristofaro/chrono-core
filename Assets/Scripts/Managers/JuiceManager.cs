@@ -64,4 +64,29 @@ public class JuiceManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         if (sr != null) sr.color = originalColor;
     }
+
+    /// <summary>
+    /// Briefly slows down time for impact.
+    /// </summary>
+    public void TimeScaleDip(float scale = 0.2f, float duration = 0.5f)
+    {
+        StartCoroutine(DoTimeScaleDip(scale, duration));
+    }
+
+    private IEnumerator DoTimeScaleDip(float scale, float duration)
+    {
+        float originalScale = Time.timeScale;
+        Time.timeScale = scale;
+        // Since we are slowing time, we need to use unscaledDeltaTime or WaitForSecondsRealtime
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = originalScale;
+    }
+
+    public void ShowRoomTitle(string roomName)
+    {
+        if (ChronoCore.UI.RoomTitleUI.Instance != null)
+        {
+            ChronoCore.UI.RoomTitleUI.Instance.ShowTitle(roomName);
+        }
+    }
 }

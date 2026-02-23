@@ -3,6 +3,7 @@ using UnityEngine;
 public class RoomLinkTrigger : MonoBehaviour
 {
     [Header("Room Management")]
+    [SerializeField] private string roomName = "New Area";
     [SerializeField] private GameObject[] roomsToEnable;
     [SerializeField] private GameObject[] roomsToDisable;
     
@@ -37,12 +38,13 @@ public class RoomLinkTrigger : MonoBehaviour
             RoomTransitionController.Instance.SetRoomEntryPoint(playerSpawnTarget);
         }
 
-        Debug.Log($"[RoomLink] Transitioned to new zone. Spawn Target: {playerSpawnTarget}");
+        Debug.Log($"[RoomLink] Transitioned to new zone: {roomName}. Spawn Target: {playerSpawnTarget}");
 
         // Juice
         if (JuiceManager.Instance != null)
         {
             JuiceManager.Instance.HitFlash(null, 0.05f); // Screen flash fallback
+            JuiceManager.Instance.ShowRoomTitle(roomName);
         }
     }
 }
