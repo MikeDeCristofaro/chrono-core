@@ -23,6 +23,20 @@ Player inputs cannot directly apply forces to the character controller.
 *   Inputs must generate `Command` objects (e.g., `JumpCommand`, `AttackCommand`).
 *   During a rewind, the system stops reading live input and instead reverses through the state buffer, overriding the `Command` stream to ensure the player's past actions are accurately represented or wiped as they travel backward.
 
+### 3.3 Rewind R&D Sprint — Exit Criteria (Definition of Done)
+The Rewind prototype R&D sprint is considered **complete** only when ALL of the following are verified and documented:
+
+| # | Criteria | Verification Method |
+|---|---|---|
+| 1 | A Unity grey-box scene exists with: a player character, 1 enemy, 1 moving platform, and 1 active projectile — all implementing `IRewindable`. | Code review + scene demo |
+| 2 | Player can trigger a **5-second rewind** and all entities restore to their snapshotted state with no position desync or animation pop. | Manual QA playtest + screen recording |
+| 3 | Rewind functions correctly when triggered mid-physics-frame (i.e., does not cause jitter or object overlap). | Unity Profiler frame analysis |
+| 4 | Zero GC allocations occur during an active rewind event. | Unity Memory Profiler — allocation trace |
+| 5 | The circular state buffer correctly wraps around without corrupting old snapshots when gameplay exceeds the buffer window (5s). | Automated unit test |
+| 6 | A written report documents the findings, any architectural trade-offs discovered, and a go/no-go recommendation for integration into the full player controller. | Document in `/docs/Rewind_RnD_Report.md` |
+
+
+
 ## 4. World Streaming Architecture
 To achieve "zero loading screens" across a Metroidvania map while maintaining 60-120 FPS, the game world cannot be loaded into memory simultaneously.
 

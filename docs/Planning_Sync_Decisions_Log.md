@@ -114,9 +114,9 @@
 
 ---
 
-## 🟡 Escalated Item (For Senior Manager → Executive)
+## ✅ Scope — Confirmed by Executive
 
-> **Scope Confirmation Pending** — The project evolved from "Core-Vanguard" (PC-only) to "Chrono-Core" (multi-platform). The Senior Manager has escalated this for formal executive approval. **No action taken pending confirmation.**
+> **PC (Steam) ONLY.** The project targets PC exclusively. Multi-platform console ports are **not in scope**. This is a final decision from the executive. The Architect's GDD v2 references to console platforms should be removed.
 
 ---
 
@@ -125,25 +125,21 @@
 | # | Action | Owner | Due |
 |---|--------|-------|-----|
 | A1 | Write full Rewind Acceptance Criteria doc | Architect | Phase 1, Week 1 |
-| A2 | Submit PS5, Switch, Xbox dev kit procurement | Architect | Phase 1, Day 1 |
-| A3 | Set up Unity Test Framework project structure | Architect | Phase 1, Week 1 |
-| A4 | Draft Platform Compatibility Matrix skeleton | QA | Phase 1, Week 3 |
-| A5 | Write initial smoke test suite (movement, jump, attack, rewind) | QA | Phase 1, Week 2 |
-| A6 | Add "Console Parity" milestone to Phase 3 plan | PO | Phase 1, Week 1 |
-| A7 | Schedule external accessibility consultancy for Month 8 | PO | Phase 2 |
-| A8 | Deliver colorblind palette variants start of Phase 3 | PO (Art) | Phase 3, Month 4 |
-| A9 | Implement per-room memory CI gate | Architect | Phase 2, Week 1 |
+| A2 | Set up Unity Test Framework project structure | Architect | Phase 1, Week 1 |
+| A3 | Write initial smoke test suite (movement, jump, attack, rewind) | QA | Phase 1, Week 2 |
+| A4 | Remove console platform references from GDD v2 — PC only | Architect | Phase 1, Week 1 |
+| A5 | Schedule external accessibility consultancy for Month 8 | PO | Phase 2 |
+| A6 | Deliver colorblind palette variants start of Phase 3 | PO (Art) | Phase 3, Month 4 |
+| A7 | Implement per-room memory CI gate (PC budget baseline) | Architect | Phase 2, Week 1 |
 
 ---
 
 ## ✅ Phase 1 Revised Checklist (Updated)
 
-- [ ] Finalize and publish GDD v2 (already drafted by Architect)
+- [ ] Finalize and publish GDD v2 — remove console references, PC only (A4)
 - [ ] Create Rewind Acceptance Criteria doc (A1)
 - [ ] Establish art style guide and colorblind palette requirements
-- [ ] Submit dev kit procurement requests (A2)
-- [ ] Select Unity, set up version control and GameCI pipeline
-- [ ] Set up Unity Test Framework (A3)
-- [ ] Write initial smoke test suite (A5)
+- [ ] Select Unity, set up version control and GameCI pipeline (PC build target only)
+- [ ] Set up Unity Test Framework (A2)
+- [ ] Write initial smoke test suite (A3)
 - [ ] Develop grey-box prototype: movement, combat, rewind (2-week R&D block)
-- [ ] Draft Platform Compatibility Matrix (A4)
