@@ -24,6 +24,13 @@ public class PlayerController : MonoBehaviour, IRewindable
     [SerializeField] private Transform ledgeCheck;
     public bool canLedgeClimb = false;
 
+    [Header("Secondary Weapon")]
+    [SerializeField] private GameObject grenadePrefab;
+    [SerializeField] private Transform grenadeFirePoint;
+    [SerializeField] private float throwForce = 10f;
+    [SerializeField] private int maxGrenades = 3;
+    private int currentGrenades;
+
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool isTouchingWall;
@@ -35,6 +42,7 @@ public class PlayerController : MonoBehaviour, IRewindable
 
     private void Start()
     {
+        currentGrenades = maxGrenades;
         rb = GetComponent<Rigidbody2D>();
         if (RewindManager.Instance != null)
         {
@@ -82,6 +90,12 @@ public class PlayerController : MonoBehaviour, IRewindable
                 localScale.x *= -1;
                 transform.localScale = localScale;
             }
+        }
+
+        // Secondary Fire
+        if (Input.GetButtonDown("Fire2") && currentGrenades > 0)
+        {
+            FireGrenade();
         }
 
         // Rewind Toggle
@@ -147,6 +161,28 @@ public class PlayerController : MonoBehaviour, IRewindable
         }
     }
 
+    private void FireGrenade()
+    {
+        if (grenadePrefab == null || grenadeFirePoint == null) return;
+
+        currentGrenades--;
+        GameObject grenade = Instantiate(grenadePrefab, grenadeFirePoint.position, Quaternion.identity);
+        Rigidbody2D grb = grenade.GetComponent<Rigidbody2D>();
+        
+        if (grb != null)
+        {
+            Vector2 dir = new Vector2(transform.localScale.x, 0.5f).normalized;
+            grb.linearVelocity = dir * throwForce;
+        }
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Player_Grenade");
+    }
+
+    public void AddGrenades(int amount)
+    {
+        currentGrenades = Mathf.Min(maxGrenades, currentGrenades + amount);
+    }
+
     private IEnumerator ClimbLedge()
     {
         isClimbing = true;
@@ -189,7 +225,8 @@ public class PlayerController : MonoBehaviour, IRewindable
             Velocity = rb.linearVelocity,
             IsActive = true,
             CustomBoolA = isHanging,
-            CustomBoolB = isClimbing
+            CustomBoolB = isClimbing,
+            CustomIntA = currentGrenades
         };
     }
 
@@ -200,6 +237,7 @@ public class PlayerController : MonoBehaviour, IRewindable
         rb.linearVelocity = snapshot.Velocity;
         isHanging = snapshot.CustomBoolA;
         isClimbing = snapshot.CustomBoolB;
+        currentGrenades = snapshot.CustomIntA;
 
         if (isHanging || isClimbing) rb.bodyType = RigidbodyType2D.Kinematic;
         else rb.bodyType = RigidbodyType2D.Dynamic;

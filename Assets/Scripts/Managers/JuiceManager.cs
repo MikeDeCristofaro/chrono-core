@@ -59,7 +59,6 @@ public class JuiceManager : MonoBehaviour
         if (sr == null) yield break;
         
         Color originalColor = sr.color;
-        // Simple tint flash (In a real project, this would use a 'Flash' shader property)
         sr.color = Color.white;
         yield return new WaitForSeconds(duration);
         if (sr != null) sr.color = originalColor;
@@ -77,7 +76,6 @@ public class JuiceManager : MonoBehaviour
     {
         float originalScale = Time.timeScale;
         Time.timeScale = scale;
-        // Since we are slowing time, we need to use unscaledDeltaTime or WaitForSecondsRealtime
         yield return new WaitForSecondsRealtime(duration);
         Time.timeScale = originalScale;
     }

@@ -18,6 +18,7 @@ public class EliteScavenger : MonoBehaviour, IRewindable
     [SerializeField] private float slamTelegraphTime = 0.8f;
     private float _nextSlamTime;
     private bool _isTelegraphing;
+    private float _speedMultiplier = 1.0f;
 
     private Rigidbody2D _rb;
 
@@ -41,6 +42,7 @@ public class EliteScavenger : MonoBehaviour, IRewindable
 
     private void UpdateAI()
     {
+        // Adjust cooldowns/timers by speed multiplier if appropriate
         if (Time.time >= _nextSlamTime && !_isTelegraphing)
         {
             GameObject player = GameObject.FindWithTag("Player");
@@ -51,26 +53,38 @@ public class EliteScavenger : MonoBehaviour, IRewindable
         }
     }
 
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        _speedMultiplier = multiplier;
+    }
+
     private System.Collections.IEnumerator PerformGroundSlam()
     {
         _isTelegraphing = true;
-        Debug.Log("[EliteScavenger] Telegraphing Ground Slam...");
-        yield return new WaitForSeconds(slamTelegraphTime);
+        // Slow down telegraph if speed multiplier is low
+        yield return new WaitForSeconds(slamTelegraphTime / _speedMultiplier);
 
         if (!_isDead && !(RewindManager.Instance != null && RewindManager.Instance.IsRewinding))
         {
-            Debug.Log("[EliteScavenger] GROUND SLAM!");
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, slamRadius);
             foreach (var hit in hits)
             {
                 if (hit.CompareTag("Player"))
                 {
-                    // Logic to damage player
+                    hit.GetComponent<PlayerController>()?.TakeDamage(2);
                 }
             }
-            _nextSlamTime = Time.time + groundSlamCooldown;
+            _nextSlamTime = Time.time + (groundSlamCooldown / _speedMultiplier);
         }
         _isTelegraphing = false;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        if (_isDead) return;
+        _currentHealth -= amount;
+        if (JuiceManager.Instance != null) JuiceManager.Instance.HitFlash(GetComponent<SpriteRenderer>());
+        if (_currentHealth <= 0) Die();
     }
 
     public void TakeDamage(int amount, Vector2 attackPosition)
@@ -83,18 +97,17 @@ public class EliteScavenger : MonoBehaviour, IRewindable
             float angle = Vector2.Angle(transform.right, dirToAttack);
             if (angle < shieldAngle / 2f)
             {
-                Debug.Log("[EliteScavenger] Attack Blocked by Shield!");
                 return;
             }
         }
 
-        _currentHealth -= amount;
-        if (_currentHealth <= 0) Die();
+        TakeDamage(amount);
     }
 
     private void Die()
     {
         _isDead = true;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Enemy_Explode");
         gameObject.SetActive(false);
     }
 
@@ -127,20 +140,4 @@ public class EliteScavenger : MonoBehaviour, IRewindable
     }
 
     public string GetRewindableId() => $"EliteScavenger_{gameObject.GetInstanceID()}";
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, slamRadius);
-        
-        if (shieldActive)
-        {
-            Gizmos.color = Color.blue;
-            Vector3 right = transform.right;
-            Vector3 leftLimit = Quaternion.AngleAxis(-shieldAngle / 2f, Vector3.forward) * right;
-            Vector3 rightLimit = Quaternion.AngleAxis(shieldAngle / 2f, Vector3.forward) * right;
-            Gizmos.DrawLine(transform.position, transform.position + leftLimit * 2f);
-            Gizmos.DrawLine(transform.position, transform.position + rightLimit * 2f);
-        }
-    }
 }
