@@ -28,6 +28,11 @@ namespace ChronoCore.Rewind
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+
+                for (int i = 0; i < BUFFER_CAPACITY; i++)
+                {
+                    _buffer[i] = new RewindFrame();
+                }
             }
             else
             {
@@ -74,18 +79,17 @@ namespace ChronoCore.Rewind
 
         private void CaptureFrame(bool isCheckpoint, Vector2 checkpointPos)
         {
-            RewindFrame frame = new RewindFrame
-            {
-                IsCheckpointFrame = isCheckpoint,
-                CheckpointPosition = checkpointPos
-            };
+            RewindFrame frame = _buffer[_head];
+
+            frame.IsCheckpointFrame = isCheckpoint;
+            frame.CheckpointPosition = checkpointPos;
+            frame.Snapshots.Clear();
 
             foreach (var rewindable in _rewindables)
             {
                 frame.Snapshots[rewindable.GetRewindableId()] = rewindable.CaptureState();
             }
 
-            _buffer[_head] = frame;
             _head = (_head + 1) % BUFFER_CAPACITY;
             if (_count < BUFFER_CAPACITY) _count++;
         }
