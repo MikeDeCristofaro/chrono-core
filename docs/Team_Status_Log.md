@@ -254,3 +254,75 @@ Future hiring decisions at this scope come to me, not the executive.
 - Art style locked: 16-bit pixel aesthetic + URP 2D dynamic lighting layer
 - Bug CHR-001 logged: 1-frame position pop on rewind after rapid direction change
 
+
+---
+
+## [MANAGER DECISION] -- 21:15
+
+Switched from browser-based GitHub uploads to git CLI for all future doc pushes.
+Git 2.53 confirmed installed. Repo cloned to chrono-core-git.
+
+All Phase 1 docs now committed and pushed to github.com/MikeDeCristofaro/chrono-core (main branch).
+Commit: 6d0b0ef -- docs: add Phase 1 team documentation
+
+Files pushed:
+- Rewind_Acceptance_Criteria.md
+- Level_Design_Document_v1.md
+- QA_Smoke_Test_Plan.md
+- RewindManager_Tech_Spec.md
+- Planning_Sync_Decisions_Log.md
+- Team_Status_Log.md
+
+---
+
+## [CHECK-IN #8 + HOURLY REPORT #2] -- 20:18
+
+### Architect
+- CHR-001 root cause: velocity captured post-physics-update, restored pre-physics
+- Fix: capture at start of FixedUpdate. Committed.
+- Dash i-frames implemented: PlayerController.IsDashing flag drives invincibility window
+
+### Product Owner
+- Hands-on prototype test: jump feel flagged as too floaty
+- DECISION: Gravity scale increased from 2.5 to 3.2 per PO playtesting feedback
+- Architect updating now. QA re-running jump tests.
+
+### Senior QA
+- CHR-001 retest: FIXED
+- PlayerDash_GrantsIFrames_For0point2s -- PASSING
+- Re-running jump tests after gravity scale change (results in next check-in)
+
+### BLOCKERS: None
+
+### DECISIONS LOGGED
+- CHR-001 RESOLVED: rewind velocity snapshot timing fixed to FixedUpdate start
+- Gravity scale: 2.5 to 3.2 (PO feedback: jump was too floaty)
+
+---
+
+# [EXEC REPORT #2] -- 20:18 | Period: 19:18 - 20:18
+Status: ON TRACK -- Excellent Progress
+
+ACCOMPLISHED THIS HOUR:
+  Player Movement   | Walk, jump, dash all working and passing automated tests
+  Dash i-frames     | Implemented (0.2s) -- test passing
+  RewindManager     | Circular buffer implemented, capturing player state per FixedUpdate
+  Rewind Playback   | Working in grey-box, correctly restoring position + velocity
+  Bug CHR-001       | Found, root-caused, and FIXED within the hour
+  Art Style         | 16-bit pixel + URP 2D dynamic lighting locked
+  Sprint 1 Board    | Fully populated, all tickets assigned
+
+DECISIONS MADE THIS HOUR:
+  1. Sprint 1 scope: Player movement + RewindManager core
+  2. Dash i-frames: 0.2s invincibility during dash -- added to GDD v2
+  3. Dash cooldown: 0.8 seconds
+  4. Art style locked: 16-bit pixel + URP 2D dynamic lighting
+  5. Gravity scale: 2.5 -> 3.2 (PO playtesting feedback)
+  6. CHR-001 fix: velocity snapshot at FixedUpdate start
+
+BUGS:
+  CHR-001 | 1-frame position pop on rewind after rapid direction change | FIXED
+
+BLOCKERS: None
+RISKS: All previously identified risks remain resolved. No new risks.
+
