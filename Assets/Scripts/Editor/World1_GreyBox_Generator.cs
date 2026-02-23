@@ -16,6 +16,7 @@ public class World1_GreyBox_Generator : EditorWindow
         if (managers.GetComponent<IrreversibleEventManager>() == null) managers.AddComponent<IrreversibleEventManager>();
         if (managers.GetComponent<ChronoEnergyHUD>() == null) managers.AddComponent<ChronoEnergyHUD>();
         if (managers.GetComponent<RoomTransitionController>() == null) managers.AddComponent<RoomTransitionController>();
+        if (managers.GetComponent<RewindVisualEffect>() == null) managers.AddComponent<RewindVisualEffect>();
 
         // 2. Room 01: Crash Site
         GameObject room01 = new GameObject("Room_01_CrashSite");
@@ -34,7 +35,6 @@ public class World1_GreyBox_Generator : EditorWindow
         doorVisual.GetComponent<Renderer>().material.color = Color.red;
         
         GatedDoor gd = doorObj.AddComponent<GatedDoor>();
-        // Use reflection to set the door's private fields for the generator
         SetPrivateField(gd, "doorVisual", doorVisual);
         SetPrivateField(gd, "doorCollider", doorVisual.GetComponent<BoxCollider>());
 
@@ -45,7 +45,6 @@ public class World1_GreyBox_Generator : EditorWindow
         BoxCollider2D bc = transitionTrigger.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
         bc.size = new Vector2(2, 5);
-        // This will be caught by RoomTransitionController's OnTriggerEnter2D
 
         // 5. Spawn Player
         GameObject player = GameObject.FindWithTag("Player");
@@ -75,7 +74,7 @@ public class World1_GreyBox_Generator : EditorWindow
         enemyObj.AddComponent<PatrolDrone>();
         
         Selection.activeGameObject = player;
-        Debug.Log("World 1 Whitebox generated with Transitions, Gated Doors, Player, and AI.");
+        Debug.Log("World 1 Whitebox generated with Transitions, Gated Doors, Player, AI, and Rewind Effects.");
     }
 
     private static void CreatePlatform(GameObject parent, Vector3 pos, Vector3 scale, string name)
