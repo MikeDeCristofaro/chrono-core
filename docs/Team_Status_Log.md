@@ -335,4 +335,7 @@ Shifted bug tracking from internal status logs to **GitHub Issues**.
 All identified bugs (P0-P3) and development blockers must be logged in the repository's Issues tab for full traceability.
 
 Refer to the new [Workflow.md](file:///C:/Users/miked/.gemini/antigravity/playground/astral-apogee/docs/Workflow.md) for reporting guidelines.
+<<<<<<< HEAD
 $status
+=======
+>>>>>>> 1a55cd53b60e3dda2ad47fa9cf2d258426432c20

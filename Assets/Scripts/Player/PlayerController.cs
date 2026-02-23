@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour, IRewindable
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
+<<<<<<< HEAD
     public RewindSnapshot CaptureState()
     {
         return new RewindSnapshot
@@ -72,13 +73,28 @@ public class PlayerController : MonoBehaviour, IRewindable
             Velocity = rb.linearVelocity,
             IsActive = true
         };
+=======
+    public void CaptureState(ref RewindSnapshot snapshot)
+    {
+        snapshot.position = transform.position;
+        snapshot.rotation = transform.rotation;
+        snapshot.health = currentHealth;
+        snapshot.velocity = rb.linearVelocity;
+>>>>>>> 1a55cd53b60e3dda2ad47fa9cf2d258426432c20
     }
 
     public void RestoreState(RewindSnapshot snapshot)
     {
+<<<<<<< HEAD
         transform.position = snapshot.Position;
         currentHealth = snapshot.Health;
         rb.linearVelocity = snapshot.Velocity;
+=======
+        transform.position = snapshot.position;
+        transform.rotation = snapshot.rotation;
+        currentHealth = snapshot.health;
+        rb.linearVelocity = snapshot.velocity;
+>>>>>>> 1a55cd53b60e3dda2ad47fa9cf2d258426432c20
     }
 
     public string GetRewindableId() => "PlayerInstance";
