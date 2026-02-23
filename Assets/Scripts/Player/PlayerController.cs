@@ -63,20 +63,25 @@ public class PlayerController : MonoBehaviour, IRewindable
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
-    public void CaptureState(ref RewindSnapshot snapshot)
+    public RewindSnapshot CaptureState()
     {
-        snapshot.position = transform.position;
-        snapshot.rotation = transform.rotation;
-        snapshot.health = currentHealth;
-        snapshot.velocity = rb.linearVelocity;
+        return new RewindSnapshot
+        {
+            Position = transform.position,
+            Rotation = transform.eulerAngles.z,
+            Health = currentHealth,
+            Velocity = rb.linearVelocity,
+            IsActive = gameObject.activeSelf
+        };
     }
 
     public void RestoreState(RewindSnapshot snapshot)
     {
-        transform.position = snapshot.position;
-        transform.rotation = snapshot.rotation;
-        currentHealth = snapshot.health;
-        rb.linearVelocity = snapshot.velocity;
+        transform.position = snapshot.Position;
+        transform.rotation = Quaternion.Euler(0, 0, snapshot.Rotation);
+        currentHealth = snapshot.Health;
+        rb.linearVelocity = snapshot.Velocity;
+        gameObject.SetActive(snapshot.IsActive);
     }
 
     public string GetRewindableId() => "PlayerInstance";
