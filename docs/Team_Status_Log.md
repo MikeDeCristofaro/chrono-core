@@ -326,3 +326,12 @@ BUGS:
 BLOCKERS: None
 RISKS: All previously identified risks remain resolved. No new risks.
 
+
+---
+
+## [MANAGER DECISION] -- 22:26
+
+Shifted bug tracking from internal status logs to **GitHub Issues**. 
+All identified bugs (P0-P3) and development blockers must be logged in the repository's Issues tab for full traceability.
+
+Refer to the new [Workflow.md](file:///C:/Users/miked/.gemini/antigravity/playground/astral-apogee/docs/Workflow.md) for reporting guidelines.
