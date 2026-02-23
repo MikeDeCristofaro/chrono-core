@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 using ChronoCore.Rewind;
+using ChronoCore.Visuals;
+using ChronoCore.Environment;
 
 public class World1_GreyBox_Generator : EditorWindow
 {
     private static Material neonGreenMat;
 
-    [MenuItem("Chrono-Core/Generate World 1 Final Vertical Slice")]
+    [MenuItem("Chrono-Core/Generate World 1 Visual Prototype v2")]
     public static void Generate()
     {
         // 0. Load Assets
@@ -21,7 +23,7 @@ public class World1_GreyBox_Generator : EditorWindow
         EnsureComponent<IrreversibleEventManager>(managers);
         EnsureComponent<JuiceManager>(managers);
         EnsureComponent<AudioManager>(managers);
-        EnsureComponent<UpgradeManager>(managers); // NEW: Phase 4
+        EnsureComponent<UpgradeManager>(managers);
         EnsureComponent<RoomTransitionController>(managers);
         EnsureComponent<RewindVisualEffect>(managers);
 
@@ -29,63 +31,76 @@ public class World1_GreyBox_Generator : EditorWindow
         GameObject worldRoot = GameObject.Find("World_Root");
         if (worldRoot == null) worldRoot = new GameObject("World_Root");
 
-        // 3. Room Generation (10 Rooms)
+        // 3. Parallax Background Setup
+        SetupParallax(worldRoot.transform);
+
+        // 4. Room Generation (10 Rooms) - Using Sprites instead of Cubes
         
         // Room 01: Crash Site
         GameObject room01 = CreateRoom("Room_01_CrashSite", worldRoot.transform, Vector3.zero);
-        CreateVibrantPlatform(room01, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
-        
-        // Room 02: Research Facility (Wall Jump Unlock)
+        CreateSpritePlatform(room01, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
+        CreateFlora(room01, new Vector3(-2, -1.2f, 0));
+        CreateFlora(room01, new Vector3(3, -1.2f, 0));
+
+        // Room 02: Facility Entrance
         GameObject room02 = CreateRoom("Room_02_Facility", worldRoot.transform, new Vector3(30, 0, 0));
-        CreateVibrantPlatform(room02, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
+        CreateSpritePlatform(room02, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
         CreateAbilityUnlock(room02, new Vector3(5, 0, 0), "WallJump", Color.cyan);
-        
+        CreateFlora(room02, new Vector3(-5, -1.2f, 0));
+
         // Room 03: The Climb (Vertical Shaft)
         GameObject room03 = CreateRoom("Room_03_TheClimb", worldRoot.transform, new Vector3(60, 15, 0));
-        CreateVibrantPlatform(room03, new Vector3(-5, 0, 0), new Vector3(1, 40, 1), "LeftWall");
-        CreateVibrantPlatform(room03, new Vector3(5, 0, 0), new Vector3(1, 40, 1), "RightWall");
-        CreateVibrantPlatform(room03, new Vector3(0, -20, 0), new Vector3(11, 1, 1), "Base");
-
-        // Room 04: Overgrown Junction
-        GameObject room04 = CreateRoom("Room_04_Junction", worldRoot.transform, new Vector3(60, 40, 0));
-        CreateVibrantPlatform(room04, new Vector3(0, -2, 0), new Vector3(40, 1, 1), "Floor");
-
-        // Room 05: Hidden Lab (Stat Upgrade)
-        GameObject room05 = CreateRoom("Room_05_Lab", worldRoot.transform, new Vector3(100, 40, 0));
-        CreateVibrantPlatform(room05, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
-
-        // Room 06: Dark Corridor
-        GameObject room06 = CreateRoom("Room_06_Corridor", worldRoot.transform, new Vector3(140, 40, 0));
-        CreateVibrantPlatform(room06, new Vector3(0, -2, 0), new Vector3(50, 1, 1), "Floor");
-
-        // Room 07: Elite Gauntlet
-        GameObject room07 = CreateRoom("Room_07_Gauntlet", worldRoot.transform, new Vector3(190, 40, 0));
-        CreateVibrantPlatform(room07, new Vector3(0, -2, 0), new Vector3(40, 1, 1), "Floor");
-        CreateEliteScavenger(room07, new Vector3(10, 1, 0));
+        CreateSpritePlatform(room03, new Vector3(-5, 0, 0), new Vector3(1, 40, 1), "LeftWall");
+        CreateSpritePlatform(room03, new Vector3(5, 0, 0), new Vector3(1, 40, 1), "RightWall");
+        CreateSpritePlatform(room03, new Vector3(0, -20, 0), new Vector3(11, 1, 1), "Base");
+        CreateFlora(room03, new Vector3(-4.2f, -10, 0));
 
         // Room 08: Boss Arena
         GameObject room08 = CreateRoom("Room_08_BossArena", worldRoot.transform, new Vector3(250, 40, 0));
-        CreateVibrantPlatform(room08, new Vector3(0, -5, 0), new Vector3(60, 2, 1), "BossFloor");
-        CreateVibrantPlatform(room08, new Vector3(-30, 10, 0), new Vector3(2, 30, 1), "LeftWall");
-        CreateVibrantPlatform(room08, new Vector3(30, 10, 0), new Vector3(2, 30, 1), "RightWall");
+        CreateSpritePlatform(room08, new Vector3(0, -5, 0), new Vector3(60, 2, 1), "BossFloor");
+        CreateSpritePlatform(room08, new Vector3(-30, 10, 0), new Vector3(2, 30, 1), "LeftWall");
+        CreateSpritePlatform(room08, new Vector3(30, 10, 0), new Vector3(2, 30, 1), "RightWall");
         CreateThresherBoss(room08, new Vector3(0, 5, 0));
 
-        // Room 09: Extraction
-        GameObject room09 = CreateRoom("Room_09_Extraction", worldRoot.transform, new Vector3(310, 40, 0));
-        CreateVibrantPlatform(room09, new Vector3(0, -2, 0), new Vector3(20, 1, 1), "Floor");
-
-        // Room 10: Shortcut to Start
-        GameObject room10 = CreateRoom("Room_10_Shortcut", worldRoot.transform, new Vector3(0, 20, 0));
-        CreateVibrantPlatform(room10, new Vector3(0, -2, 0), new Vector3(10, 1, 1), "Floor");
-
-        // 4. Player Setup
+        // 5. Player Setup
         GameObject player = SetupPlayer(new Vector3(-5, 0, 0));
         
-        // 5. UI Canvas Setup
+        // 6. UI Canvas Setup
         SetupUI();
 
         Selection.activeGameObject = player;
-        Debug.Log("World 1 Metroidvania Loop (10 Rooms) generated with Wall Jump mechanics and full boss sequence.");
+        Debug.Log("World 1 Visual Prototype v2 (Parallax, Flora, Sprites) generated.");
+    }
+
+    private static void SetupParallax(Transform root)
+    {
+        GameObject bgRoot = new GameObject("Parallax_Background");
+        bgRoot.transform.SetParent(root);
+
+        // Far Layer
+        GameObject far = CreateBackgroundLayer("Far_Towers", bgRoot.transform, 0.95f, new Color(0.1f, 0.05f, 0.2f, 1f));
+        // Mid Layer
+        GameObject mid = CreateBackgroundLayer("Mid_Trees", bgRoot.transform, 0.8f, new Color(0.15f, 0.1f, 0.3f, 1f));
+    }
+
+    private static GameObject CreateBackgroundLayer(string name, Transform parent, float factor, Color color)
+    {
+        GameObject layer = new GameObject(name);
+        layer.transform.SetParent(parent);
+        layer.transform.localPosition = new Vector3(0, 0, 10); // Background Z
+        
+        SpriteRenderer sr = layer.AddComponent<SpriteRenderer>();
+        sr.color = color;
+        // Placeholder sprite scale
+        layer.transform.localScale = new Vector3(100, 100, 1);
+        
+        ParallaxLayer pl = layer.AddComponent<ParallaxLayer>();
+        // Reflection for factor since it's serialized private
+        var so = new SerializedObject(pl);
+        so.FindProperty("parallaxFactor").floatValue = factor;
+        so.ApplyModifiedProperties();
+
+        return layer;
     }
 
     private static GameObject SetupPlayer(Vector3 spawnPos)
@@ -101,25 +116,28 @@ public class World1_GreyBox_Generator : EditorWindow
             player.AddComponent<CapsuleCollider2D>();
             PlayerController pc = player.AddComponent<PlayerController>();
 
-            // Setup Checks (Ground/Wall)
-            GameObject gc = new GameObject("GroundCheck");
-            gc.transform.SetParent(player.transform);
-            gc.transform.localPosition = new Vector3(0, -1, 0);
-            
-            GameObject wc = new GameObject("WallCheck");
-            wc.transform.SetParent(player.transform);
-            wc.transform.localPosition = new Vector3(0.6f, 0, 0);
+            // Setup Checks
+            CreateCheck(player.transform, "GroundCheck", new Vector3(0, -1, 0), "groundCheck", pc);
+            CreateCheck(player.transform, "WallCheck", new Vector3(0.6f, 0, 0), "wallCheck", pc);
+            CreateCheck(player.transform, "LedgeCheck", new Vector3(0.6f, 1f, 0), "ledgeCheck", pc);
 
-            // Assign to serialized fields via Reflection/SerializedObject
             SerializedObject so = new SerializedObject(pc);
-            so.FindProperty("groundCheck").objectReferenceValue = gc.transform;
-            so.FindProperty("wallCheck").objectReferenceValue = wc.transform;
-            so.FindProperty("groundLayer").intValue = LayerMask.GetMask("Default"); // Should be dedicated layer
+            so.FindProperty("groundLayer").intValue = LayerMask.GetMask("Default");
             so.FindProperty("wallLayer").intValue = LayerMask.GetMask("Default");
             so.ApplyModifiedProperties();
         }
         player.transform.position = spawnPos;
         return player;
+    }
+
+    private static void CreateCheck(Transform parent, string name, Vector3 pos, string propName, MonoBehaviour target)
+    {
+        GameObject check = new GameObject(name);
+        check.transform.SetParent(parent);
+        check.transform.localPosition = pos;
+        SerializedObject so = new SerializedObject(target);
+        so.FindProperty(propName).objectReferenceValue = check.transform;
+        so.ApplyModifiedProperties();
     }
 
     private static void SetupUI()
@@ -136,6 +154,10 @@ public class World1_GreyBox_Generator : EditorWindow
             GameObject hud = new GameObject("ChronoEnergy_HUD");
             hud.transform.SetParent(canvas.transform);
             hud.AddComponent<ChronoEnergyUI>();
+
+            GameObject roomTitle = new GameObject("RoomTitle_UI");
+            roomTitle.transform.SetParent(canvas.transform);
+            roomTitle.AddComponent<ChronoCore.UI.RoomTitleUI>();
         }
     }
 
@@ -147,18 +169,32 @@ public class World1_GreyBox_Generator : EditorWindow
         return room;
     }
 
-    private static void CreateVibrantPlatform(GameObject parent, Vector3 pos, Vector3 scale, string name)
+    private static void CreateSpritePlatform(GameObject parent, Vector3 pos, Vector3 scale, string name)
     {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.name = name;
-        cube.transform.SetParent(parent.transform);
-        cube.transform.localPosition = pos;
-        cube.transform.localScale = scale;
+        GameObject plat = new GameObject(name);
+        plat.transform.SetParent(parent.transform);
+        plat.transform.localPosition = pos;
+        plat.transform.localScale = scale;
         
-        if (neonGreenMat != null) cube.GetComponent<Renderer>().material = neonGreenMat;
+        SpriteRenderer sr = plat.AddComponent<SpriteRenderer>();
+        if (neonGreenMat != null) sr.material = neonGreenMat;
+        sr.color = new Color(0.1f, 0.4f, 0.2f, 1f); // Base biome green
+        
+        plat.AddComponent<BoxCollider2D>();
+    }
 
-        Object.DestroyImmediate(cube.GetComponent<BoxCollider>());
-        cube.AddComponent<BoxCollider2D>();
+    private static void CreateFlora(GameObject parent, Vector3 pos)
+    {
+        GameObject plant = new GameObject("Luminescent_Plant");
+        plant.transform.SetParent(parent.transform);
+        plant.transform.localPosition = pos;
+        plant.transform.localScale = Vector3.one * 1.5f;
+
+        SpriteRenderer sr = plant.AddComponent<SpriteRenderer>();
+        if (neonGreenMat != null) sr.material = neonGreenMat;
+        
+        plant.AddComponent<CircleCollider2D>().isTrigger = true;
+        plant.AddComponent<LuminescentPlant>();
     }
 
     private static void CreateAbilityUnlock(GameObject parent, Vector3 pos, string id, Color color)
@@ -169,16 +205,14 @@ public class World1_GreyBox_Generator : EditorWindow
         unlock.AddComponent<CircleCollider2D>().isTrigger = true;
         AbilityUnlockTrigger trigger = unlock.AddComponent<AbilityUnlockTrigger>();
         
-        // Internal setup
         SerializedObject so = new SerializedObject(trigger);
         so.FindProperty("abilityId").stringValue = id;
         so.ApplyModifiedProperties();
 
-        GameObject vis = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject vis = new GameObject("Visual");
         vis.transform.SetParent(unlock.transform);
         vis.transform.localPosition = Vector3.zero;
-        vis.transform.localScale = Vector3.one * 0.5f;
-        vis.GetComponent<Renderer>().material.color = color;
+        vis.AddComponent<SpriteRenderer>().color = color;
     }
 
     private static void CreateThresherBoss(GameObject parent, Vector3 pos)
