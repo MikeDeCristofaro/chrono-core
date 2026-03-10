@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace ChronoCore.Rewind
 {
+    [System.Serializable]
     public struct RewindSnapshot
     {
               public Vector2 Position;
